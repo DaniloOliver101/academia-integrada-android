@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".TreinosActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,38 +19,25 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:gravity="center"
+            android:text="Selecione o tipo de pesquisa"
             android:textSize="18sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/grupoEntrada"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="visible">
-
-        <EditText
-            android:id="@+id/editTextEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="EMAIL"
-            android:ems="10"
-            android:inputType="textEmailAddress" />
-
-        <EditText
-            android:id="@+id/editTextPass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="SENHA"
-            android:ems="10"
-            android:inputType="numberPassword" />
-
-    </LinearLayout>
-
     <Button
-        android:id="@+id/btLogin"
+        android:id="@+id/btBuscar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="ENTRAR" />
+        android:text="Buscar" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/listViewTreinos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="30dp" />
+    </LinearLayout>
 </LinearLayout>

@@ -3,6 +3,7 @@ package com.example.webservicesapi;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -11,10 +12,20 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static android.view.View.GONE;
@@ -22,112 +33,76 @@ import static android.view.View.VISIBLE;
 
 public class MainActivity extends AppCompatActivity {
 
+    String urlWebService = "http://academia-web.herokuapp.com/apis/login.php";
+//    String urlWebService = "http://9.86.19.155/academia-web/apis/login.php";
     LinearLayout grupoEntrada;
-    RadioGroup radioGroup;
-    RadioButton radioButton;
-    EditText entrada;
-    Button btBsucar;
-    ListView listViewAlunos;
+    EditText email;
+    EditText senha;
+    Button btEntrar;
+    TextView nome;
+    StringRequest stringRequest;
+    RequestQueue requestQueue;
 
-    List<Aluno> listaAlunosAPI;
-    ArrayList<String> listaNomeAlunos = new ArrayList<String>();
-
-    ArrayAdapter<String> adapter;
-
-    String tipoRequisicao = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        requestQueue = Volley.newRequestQueue(this);
+
         ActionBar actionBar = getSupportActionBar();
 
         grupoEntrada = findViewById(R.id.grupoEntrada);
-        entrada = findViewById(R.id.entrada);
-        radioGroup = findViewById(R.id.opcoes);
-        btBsucar = (Button) findViewById(R.id.btBuscar);
-        listViewAlunos = findViewById(R.id.listViewAlunos);
-
-        btBsucar.setOnClickListener(new View.OnClickListener() {
+        email = findViewById(R.id.editTextEmail);
+        senha = findViewById(R.id.editTextPass);
+        nome = findViewById(R.id.textViewNome);
+        btEntrar = findViewById(R.id.btLogin);
+        btEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+                boolean validado = true;
+                if(email.getText().length()==0){
+                    email.setError("Campo Obrigatório");
+                    email.requestFocus();
+                    validado = false;
+                } else if(senha.getText().length()==0){
+                    senha.setError("Campo Obrigatório");
+                    senha.requestFocus();
+                    validado = false;
+                }
+                if(validado){
 
-                    if (tipoRequisicao.equals("ra")) {
-                        listaAlunosAPI = new HttpService("ra",
-                                entrada.getText().toString()).execute().get();
-
-                    } else if (tipoRequisicao.equals("curso")) {
-                        listaAlunosAPI = new HttpService("curso",
-                                entrada.getText().toString()).execute().get();
-
-                    } else {
-                        listaAlunosAPI = new HttpService().execute().get();
-
-                    }
-                    entrada.setText("");
-
-                    listaNomeAlunos.clear();
-                    for (Aluno aluno : listaAlunosAPI) {
-                        listaNomeAlunos.add(aluno.getNome());
-                    }
-
-                    adapter = new ArrayAdapter<String>(
-                            getApplicationContext(),
-                            android.R.layout.simple_list_item_1, listaNomeAlunos);
-
-                    listViewAlunos.setAdapter(adapter);
-
-                    grupoEntrada.setVisibility(GONE);
-
-
-                    Toast.makeText(getApplicationContext(),
-                            listaNomeAlunos.size() + " registros recuperado(s)",
-                            Toast.LENGTH_LONG).show();
-
-                } catch (InterruptedException e) {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
-                } catch (ExecutionException e) {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
-                } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Validando dados por favor aguarde! ",Toast.LENGTH_SHORT).show();
+                    validarLogin();
                 }
             }
         });
 
     }
+    private void validarLogin(){
+            stringRequest = new StringRequest(Request.Method.POST, urlWebService, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.v("LogLogin", response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.v("LogError", error.getMessage());
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("email",email.getText().toString());
+                    params.put("senha",senha.getText().toString());
+                    return params;
 
-    public void checaOpcoes(View v) {
-
-        int radioId = radioGroup.getCheckedRadioButtonId();
-        radioButton = findViewById(radioId);
-        tipoRequisicao = "";
-
-        if (listaNomeAlunos.isEmpty() == false) {
-            listaNomeAlunos.clear();
-            adapter.notifyDataSetChanged();
-        }
-
-        if (radioButton.getText().equals("Por RA") || radioButton.getText().equals("Por Curso")) {
-            grupoEntrada.setVisibility(VISIBLE);
-
-            if (radioButton.getText().equals("Por RA")) {
-                entrada.setHint("Digite o RA a ser pesquisado");
-                tipoRequisicao = "ra";
-            }
-
-            if (radioButton.getText().equals("Por Curso")) {
-                entrada.setHint("Digite o CURSO a ser pesquisado");
-                tipoRequisicao = "curso";
-            }
-
-            if (radioButton.getText().equals("Todos")) {
-                tipoRequisicao = "Todos";
-            }
-
-        } else {
-            grupoEntrada.setVisibility(GONE);
-        }
+                }
+        };
+        requestQueue.add(stringRequest);
     }
+
+
 }
