@@ -10,6 +10,7 @@ public class Aluno implements Serializable {
     private String password;
     private String profile;
 
+    public Aluno(){};
     public Aluno(int id, String nome, String email, String password, String profile) {
         this.id = id;
         this.nome = nome;

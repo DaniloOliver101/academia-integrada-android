@@ -1,17 +1,14 @@
 package com.example.webservicesapi;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,19 +19,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import org.json.JSONObject;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity {
 
     String urlWebService = "http://academia-web.herokuapp.com/apis/login.php";
-//    String urlWebService = "http://9.86.19.155/academia-web/apis/login.php";
     LinearLayout grupoEntrada;
     EditText email;
     EditText senha;
@@ -50,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         requestQueue = Volley.newRequestQueue(this);
+        Aluno aluno = new Aluno();
 
         ActionBar actionBar = getSupportActionBar();
 
@@ -73,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if(validado){
 
+
                     Toast.makeText(getApplicationContext(),"Validando dados por favor aguarde! ",Toast.LENGTH_SHORT).show();
                     validarLogin();
                 }
@@ -85,6 +80,46 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(String response) {
                     Log.v("LogLogin", response);
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        boolean isError = jsonObject.getBoolean("erro");
+                        if(!isError){
+                            Log.v("LogCorreto","Deu certo!");
+                            int id;
+                            id = jsonObject.getInt("id");
+                            Log.v("LogId", Integer.toString(id));
+
+                            String name = jsonObject.getString("name");
+                            Log.v("LogName",name);
+
+                            String userEmail = jsonObject.getString("email");
+
+                            String profile = jsonObject.getString("profile");
+                            Log.v("LogProfile",profile);
+
+                            Intent treinos = new Intent(MainActivity.this,TreinosActivity.class);
+//                            startActivity(intent);
+                            String defaultProfile = "ALUNO";
+                                if(jsonObject.getString("profile").equals(defaultProfile)){
+                                    Log.v("LogAluno","Perfil Aluno");
+                                    Bundle params = new Bundle();
+                                    params.putInt("id", id);
+                                    params.putString("name", name);
+                                    params.putString("email",userEmail);
+                                    params.putString("profile", profile);
+                                    treinos.putExtras(params);
+                                    startActivity(treinos);
+
+                                } else {
+                                    Log.v("LogRes","N é aluno");
+                                    startActivity(treinos);
+
+
+                                }
+                        }
+                    } catch (Exception e ){
+                        Log.v("LogDeExcept", e.toString());
+                    }
                 }
             }, new Response.ErrorListener() {
                 @Override

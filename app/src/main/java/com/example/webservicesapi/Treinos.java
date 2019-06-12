@@ -1,19 +1,39 @@
 package com.example.webservicesapi;
 
-public class Treinos {
-    String idtreino;
-    String diaSemana;
-    String treino;
+import java.io.Serializable;
 
-    public Treinos(String idtreino, String diaSemana, String treino){
-        this.idtreino = idtreino;
-        this.diaSemana = diaSemana;
+public class Treinos implements Serializable {
+    private int id = 0;
+    private String dia = "";
+    private String treino = "";
+
+    public Treinos(int id, String dia, String treino) {
+        this.id   = id;
+        this.dia = dia;
         this.treino = treino;
     }
-    public String getIdtreino(){return idtreino; }
-    public void setIdtreino(String idtreino){this.idtreino = idtreino; }
-    public String getDiaSemana(){return diaSemana; }
-    public void setDiaSemana(String diaSemana){this.diaSemana = diaSemana; }
-    public String getTreino(){return treino; }
-    public void setTreino(String treino){this.treino = treino; }
+
+    public int getIdTreino() {
+        return id;
+    }
+
+    public void setIdTreino(int id) {
+        this.id = id;
+    }
+
+    public String getDia() {
+        return dia;
+    }
+
+    public void setDia(String dia) {
+        this.dia = dia;
+    }
+
+    public String getTreino() {
+        return treino;
+    }
+
+    public void setEmail(String treino) {
+        this.treino = treino;
+    }
 }

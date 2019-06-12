@@ -13,15 +13,35 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/textViewTreinos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:text="Treinos da Semana"
+            android:textSize="18sp" />
+        <TextView
             android:id="@+id/textViewNome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:gravity="center"
-            android:text="Selecione o tipo de pesquisa"
+            android:text="Aluno"
             android:textSize="18sp" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+    </LinearLayout>
+
+
 
     <Button
         android:id="@+id/btBuscar"
